@@ -74,18 +74,32 @@ const Hero = () => {
 
             {/* Tech Stack Icons */}
             <div className="mt-12">
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 font-medium">
+              <p className="text-sm text-green-400 mb-4 font-medium uppercase tracking-wider">
                 TECHNOLOGIES I WORK WITH
               </p>
-              <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-                {['React', 'Next.js', 'TypeScript', 'Node.js', 'Python', 'AWS'].map((tech) => (
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3">
+                {['C# .NET', 'Next.js', 'Python', 'SQL'].map((tech) => (
                   <span
                     key={tech}
-                    className="px-3 py-1 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium shadow-sm border border-gray-200 dark:border-gray-600"
+                    className="px-3 py-1.5 bg-gray-800/50 text-green-400 rounded-lg text-sm font-mono border border-green-400/20 shadow-[0_0_8px_rgba(34,197,94,0.2)] hover:shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:border-green-400/40 transition-all duration-300"
                   >
                     {tech}
                   </span>
                 ))}
+                {/* Xceptor Tag */}
+                <a
+                  href="https://www.xceptor.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 bg-purple-900/30 text-purple-400 rounded-lg text-sm font-mono border border-purple-400/30 shadow-[0_0_8px_rgba(147,51,234,0.3)] hover:shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:border-purple-400/50 hover:scale-105 transition-all duration-300 group"
+                >
+                  <span className="relative">
+                    Xceptor
+                    <svg className="inline-block ml-1 w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity duration-300" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </span>
+                </a>
               </div>
             </div>
           </div>
@@ -159,7 +173,7 @@ const Hero = () => {
               <div className="absolute top-1/4 -left-6 w-2 h-2 bg-emerald-400 rounded-full animate-bounce shadow-[0_0_8px_rgba(34,197,94,0.5)]" style={{animationDuration: '2.5s'}}></div>
               
               {/* Background IDE Panes - Stacked Effect */}
-              <div className="absolute -top-2 -left-4 w-[34rem] h-[25rem] lg:w-[33rem] lg:h-[26rem] xl:w-[36rem] xl:h-[30rem] bg-gray-800 rounded-lg border border-green-400/20 shadow-[0_0_25px_rgba(34,197,94,0.2)] z-10">
+              <div className="absolute -top-2 -left-4 w-[34rem] h-[25rem] lg:w-[33rem] lg:h-[26rem] xl:w-[38rem] xl:h-[30rem] bg-gray-800 rounded-lg border border-green-400/20 shadow-[0_0_25px_rgba(34,197,94,0.2)] z-10">
                 <div className="bg-gray-750 border-b border-green-400/15 px-4 py-2 rounded-t-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex space-x-2">
@@ -171,7 +185,7 @@ const Hero = () => {
                   </div>
                 </div>
               </div>
-              <div className="absolute -top-1 -left-2 w-[34rem] h-[25rem] lg:w-[33rem] lg:h-[26rem] xl:w-[36rem] xl:h-[30rem] bg-gray-850 rounded-lg border border-green-400/25 shadow-[0_0_20px_rgba(34,197,94,0.15)] z-20">
+              <div className="absolute -top-1 -left-2 w-[34rem] h-[25rem] lg:w-[33rem] lg:h-[26rem] xl:w-[38rem] xl:h-[30rem] bg-gray-850 rounded-lg border border-green-400/25 shadow-[0_0_20px_rgba(34,197,94,0.15)] z-20">
                 <div className="bg-gray-800 border-b border-green-400/20 px-4 py-2 rounded-t-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex space-x-2">

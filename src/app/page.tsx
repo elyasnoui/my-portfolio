@@ -1,48 +1,18 @@
 import Navigation from '@/components/Navigation';
 import Hero from '@/components/Hero';
 import Footer from '@/components/Footer';
+import Experience from '@/components/Experience';
 
 export default function Home() {
   return (
     <div className="min-h-screen">
       <Navigation />
       <main>
+        {/* Hero Section */}
         <Hero />
-        {/* About Section */}
-        <section id="about" className="relative py-20 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-950 overflow-hidden">
-          {/* Ambient lighting effects */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-20 left-20 w-64 h-64 bg-green-400/8 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-20 right-20 w-80 h-80 bg-emerald-500/6 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          </div>
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-8">
-              <span className="relative inline-block">
-                <span className="absolute inset-0 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 blur-sm opacity-50">
-                  ABOUT ME
-                </span>
-                <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-emerald-400 to-cyan-400 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">
-                  ABOUT ME
-                </span>
-              </span>
-            </h2>
-            <div className="max-w-4xl mx-auto">
-              <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-                Passionate software engineer with expertise in building scalable applications 
-                and innovative solutions. Currently working at <span className="text-green-400 font-semibold">Lloyds Banking Group</span>, 
-                where I contribute to mission-critical financial systems.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-                {['Innovation', 'Quality', 'Growth'].map((value, index) => (
-                  <div key={value} className="bg-gray-800/50 border border-green-400/20 rounded-lg p-6 shadow-[0_0_20px_rgba(34,197,94,0.1)]">
-                    <h3 className="text-green-400 font-bold text-lg mb-2">{value}</h3>
-                    <p className="text-gray-400 text-sm">Coming soon...</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+
+        {/* Experience Section */}
+        <Experience />
         
         {/* Projects Section */}
         <section id="projects" className="relative py-20 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-950 overflow-hidden">
