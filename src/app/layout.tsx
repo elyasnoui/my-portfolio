@@ -13,13 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Elyas Noui - Full-Stack Developer",
-  description: "Full-stack developer specializing in React, Next.js, and modern web technologies. Passionate about creating beautiful, functional applications.",
-  keywords: ["developer", "portfolio", "react", "nextjs", "typescript", "web development"],
+  title: "Elyas Noui - Junior Software Engineer",
+  description: "Junior Software Engineer at Lloyds Banking Group specializing in automation workflows, trading systems integration, and Xceptor platform expertise. Experienced in .NET, C#, SQL Server, Power BI, and Azure.",
+  keywords: ["technical specialist", "portfolio", "automation", "xceptor", "lloyds banking group", "dotnet", "csharp", "sql server", "power bi", "azure", "trading systems", "workflow automation"],
   authors: [{ name: "Elyas Noui" }],
   openGraph: {
-    title: "Elyas Noui - Full-Stack Developer",
-    description: "Full-stack developer specializing in React, Next.js, and modern web technologies.",
+    title: "Elyas Noui - Junior Software Engineer",
+    description: "Junior Software Engineer at Lloyds Banking Group specializing in automation workflows, trading systems integration, and Xceptor platform expertise.",
     type: "website",
   },
 };

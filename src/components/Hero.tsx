@@ -1,6 +1,78 @@
+'use client';
+
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 const Hero = () => {
+  const [displayedLines, setDisplayedLines] = useState<number>(0);
+  const [displayedTokens, setDisplayedTokens] = useState<number>(0);
+  const [cursorVisible, setCursorVisible] = useState(true);
+
+  const codeSample = [
+    [ { value: 'using', type: 'keyword', space: true }, { value: 'System', type: 'framework', space: false }, { value: ';', type: 'punctuation', space: false } ],
+    [ { value: 'using', type: 'keyword', space: true }, { value: 'System', type: 'framework', space: false }, { value: '.', type: 'punctuation', space: false }, { value: 'Collections', type: 'framework', space: false }, { value: '.', type: 'punctuation', space: false }, { value: 'Generic', type: 'framework', space: false }, { value: ';', type: 'punctuation', space: false } ],
+    [],
+    [ { value: 'public class', type: 'keyword', space: true }, { value: 'ElyasNoui', type: 'framework', space: true }, { value: ':', type: 'punctuation', space: true }, { value: 'SoftwareEngineer', type: 'framework', space: false } ],
+    [ { value: '{', type: 'punctuation', space: false } ],
+    [ { value: '  ', type: 'indent', space: false }, { value: 'public string', type: 'keyword', space: true }, { value: 'Name', type: 'property', space: true }, { value: '{', type: 'punctuation', space: true }, { value: 'get', type: 'keyword', space: false }, { value: ';', type: 'punctuation', space: true }, { value: '}', type: 'punctuation', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '"Elyas Noui"', type: 'string', space: false }, { value: ';', type: 'punctuation', space: false } ],
+    [ { value: '  ', type: 'indent', space: false }, { value: 'public string', type: 'keyword', space: true }, { value: 'Role', type: 'property', space: true }, { value: '{', type: 'punctuation', space: true }, { value: 'get', type: 'keyword', space: false }, { value: ';', type: 'punctuation', space: true }, { value: '}', type: 'punctuation', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '"Software Engineer"', type: 'string', space: false }, { value: ';', type: 'punctuation', space: false } ],
+    [ { value: '  ', type: 'indent', space: false }, { value: 'public string', type: 'keyword', space: true }, { value: 'Company', type: 'property', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '"Lloyds Banking Group"', type: 'string', space: false }, { value: ';', type: 'punctuation', space: false } ],
+    [ { value: '  ', type: 'indent', space: false }, { value: 'public int', type: 'keyword', space: true }, { value: 'YearsExperience', type: 'property', space: true }, { value: '=>', type: 'punctuation', space: true }, { value: 'DateTime', type: 'framework', space: false }, { value: '.', type: 'punctuation', space: false }, { value: 'UtcNow', type: 'property', space: false }, { value: '.', type: 'punctuation', space: false }, { value: 'Year', type: 'property', space: true }, { value: '-', type: 'punctuation', space: true }, { value: '2022', type: 'number', space: false }, { value: ';', type: 'punctuation', space: false } ],
+    [],
+    [ { value: '  ', type: 'indent', space: false }, { value: 'public', type: 'keyword', space: true }, { value: 'Dictionary', type: 'framework', space: false }, { value: '<string, string[]>', type: 'generic', space: true }, { value: 'Skills', type: 'property', space: true }, { value: '=', type: 'punctuation', space: true }, { value: 'new', type: 'keyword', space: false }, { value: '()', type: 'punctuation', space: false } ],
+    [ { value: '  ', type: 'indent', space: false }, { value: '{', type: 'punctuation', space: false } ],
+    [ { value: '    ', type: 'indent', space: false }, { value: '[', type: 'punctuation', space: false }, { value: '"Backend"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '[', type: 'punctuation', space: false }, { value: '".NET"', type: 'string', space: false }, { value: ',', type: 'punctuation', space: true }, { value: '"C#"', type: 'string', space: false }, { value: ',', type: 'punctuation', space: true }, { value: '"ASP.NET Core"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: false }, { value: ',', type: 'punctuation', space: false } ],
+    [ { value: '    ', type: 'indent', space: false }, { value: '[', type: 'punctuation', space: false }, { value: '"Frontend"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '[', type: 'punctuation', space: false }, { value: '"Blazor"', type: 'string', space: false }, { value: ',', type: 'punctuation', space: true }, { value: '"React"', type: 'string', space: false }, { value: ',', type: 'punctuation', space: true }, { value: '"TypeScript"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: false }, { value: ',', type: 'punctuation', space: false } ],
+    [ { value: '    ', type: 'indent', space: false }, { value: '[', type: 'punctuation', space: false }, { value: '"Database"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '[', type: 'punctuation', space: false }, { value: '"SQL Server"', type: 'string', space: false }, { value: ',', type: 'punctuation', space: true }, { value: '"Entity Framework"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: false } ],
+    [ { value: '  ', type: 'indent', space: false }, { value: '}', type: 'punctuation', space: false } ],
+    [ { value: '}', type: 'punctuation', space: true }, { value: '// Ready to innovate with .NET!', type: 'comment', space: false } ]
+  ];
+
+  // Typing animation effect
+  useEffect(() => {
+    const typeNextToken = async () => {
+      if (displayedLines < codeSample.length) {
+        const currentLine = codeSample[displayedLines];
+        
+        if (displayedTokens < currentLine.length) {
+          // Type next token on current line
+          await new Promise(resolve => setTimeout(resolve, 50)); // 0.5ms per character (50ms per token for visibility)
+          setDisplayedTokens(prev => prev + 1);
+        } else {
+          // Move to next line
+          await new Promise(resolve => setTimeout(resolve, 100)); // Brief pause between lines
+          setDisplayedLines(prev => prev + 1);
+          setDisplayedTokens(0);
+        }
+      }
+    };
+
+    typeNextToken();
+  }, [displayedLines, displayedTokens, codeSample]);
+
+  // Cursor blink effect
+  useEffect(() => {
+    const cursorInterval = setInterval(() => {
+      setCursorVisible(prev => !prev);
+    }, 530);
+    return () => clearInterval(cursorInterval);
+  }, []);
+
+  const getTokenColor = (type: string) => {
+    switch (type) {
+      case 'keyword': return 'text-purple-400';
+      case 'framework': return 'text-cyan-400';
+      case 'property': return 'text-green-400';
+      case 'string': return 'text-yellow-300';
+      case 'number': return 'text-yellow-300';
+      case 'comment': return 'text-gray-500';
+      case 'generic': return 'text-cyan-400';
+      case 'punctuation': return 'text-white';
+      case 'indent': return '';
+      default: return 'text-white';
+    }
+  };
+
   return (
     <section id="home" className="relative pt-16 min-h-screen flex items-center bg-gradient-to-br from-slate-900 via-gray-900 to-slate-950 dark:from-gray-950 dark:via-slate-950 dark:to-black overflow-hidden">
       {/* Ambient lighting effects */}
@@ -12,7 +84,7 @@ const Hero = () => {
         <div className="absolute top-20 right-20 w-48 h-48 bg-lime-400/6 rounded-full blur-3xl animate-pulse delay-300"></div>
         <div className="absolute bottom-32 left-1/3 w-56 h-56 bg-green-300/7 rounded-full blur-3xl animate-pulse delay-900"></div>
       </div>
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-20 items-center">
           {/* Text Content */}
           <div className="text-center lg:text-left">
@@ -21,13 +93,13 @@ const Hero = () => {
                 Hello, I&apos;m{' '}
                 <span className="relative inline-block whitespace-nowrap">
                   <span className="absolute inset-0 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 blur-sm opacity-50">
-                    ELYAS NOUI
+                    {'{ ELYAS NOUI }'}
                   </span>
                   <span className="absolute inset-0 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 blur-md opacity-30">
-                    ELYAS NOUI
+                    {'{ ELYAS NOUI }'}
                   </span>
                   <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-emerald-400 to-cyan-400 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">
-                    ELYAS NOUI
+                    {'{ ELYAS NOUI }'}
                   </span>
                 </span>
               </h1>
@@ -216,46 +288,33 @@ const Hero = () => {
                   <div className="flex">
                     {/* Code Line Numbers */}
                     <div className="text-green-400/40 mr-6 select-none">
-                      <div className="leading-relaxed">1</div>
-                      <div className="leading-relaxed">2</div>
-                      <div className="leading-relaxed">3</div>
-                      <div className="leading-relaxed">4</div>
-                      <div className="leading-relaxed">5</div>
-                      <div className="leading-relaxed">6</div>
-                      <div className="leading-relaxed">7</div>
-                      <div className="leading-relaxed">8</div>
-                      <div className="leading-relaxed">9</div>
-                      <div className="leading-relaxed">10</div>
-                      <div className="leading-relaxed">11</div>
-                      <div className="leading-relaxed">12</div>
-                      <div className="leading-relaxed">13</div>
-                      <div className="leading-relaxed">14</div>
-                      <div className="leading-relaxed">15</div>
-                      <div className="leading-relaxed">16</div>
+                      {codeSample.slice(0, displayedLines + 1).map((_, idx) => (
+                        <div key={idx} className="leading-relaxed">{idx + 1}</div>
+                      ))}
                     </div>
                     
-                    {/* Code content */}
+                    {/* Code content with typing animation */}
                     <div className="flex-1">
-                      <div className="leading-relaxed"><span className="text-purple-400">using</span> <span className="text-cyan-400">System</span>;</div>
-                      <div className="leading-relaxed"><span className="text-purple-400">using</span> <span className="text-cyan-400">System.Collections.Generic</span>;</div>
-                      <div className="leading-relaxed"></div>
-                      <div className="leading-relaxed"><span className="text-purple-400">public class</span> <span className="text-cyan-400">ElyasNoui</span> : <span className="text-cyan-400">SoftwareEngineer</span></div>
-                      <div className="leading-relaxed">{'{'}</div>
-                      <div className="leading-relaxed ml-4"><span className="text-purple-400">public string</span> <span className="text-green-400">Name</span> {'{'} <span className="text-purple-400">get</span>; {'}'} = <span className="text-yellow-300">"Elyas Noui"</span>;</div>
-                      <div className="leading-relaxed ml-4"><span className="text-purple-400">public string</span> <span className="text-green-400">Role</span> {'{'} <span className="text-purple-400">get</span>; {'}'} = <span className="text-yellow-300">"Software Engineer"</span>;</div>
-                      <div className="leading-relaxed ml-4"><span className="text-purple-400">public string</span> <span className="text-green-400">Company</span> = <span className="text-yellow-300">"Lloyds Banking Group"</span>;</div>
-                      <div className="leading-relaxed ml-4"><span className="text-purple-400">public int</span> <span className="text-green-400">YearsExperience</span> =&gt; <span className="text-cyan-400">DateTime</span>.<span className="text-green-400">UtcNow</span>.<span className="text-green-400">Year</span> - <span className="text-yellow-300">2022</span>;</div>
-                      <div className="leading-relaxed"></div>
-                      <div className="leading-relaxed ml-4"><span className="text-purple-400">public</span> <span className="text-cyan-400">Dictionary</span>{'<string, string[]>'} <span className="text-green-400">Skills</span> = <span className="text-purple-400">new</span>()</div>
-                      <div className="leading-relaxed ml-4">{'{'}</div>
-                      <div className="leading-relaxed ml-8">[<span className="text-yellow-300">"Backend"</span>] = [<span className="text-yellow-300">".NET"</span>, <span className="text-yellow-300">"C#"</span>, <span className="text-yellow-300">"ASP.NET Core"</span>],</div>
-                      <div className="leading-relaxed ml-8">[<span className="text-yellow-300">"Frontend"</span>] = [<span className="text-yellow-300">"Blazor"</span>, <span className="text-yellow-300">"React"</span>, <span className="text-yellow-300">"TypeScript"</span>],</div>
-                      <div className="leading-relaxed ml-8">[<span className="text-yellow-300">"Database"</span>] = [<span className="text-yellow-300">"SQL Server"</span>, <span className="text-yellow-300">"Entity Framework"</span>]</div>
-                      <div className="leading-relaxed ml-4">{'}'}</div>
-                      <div className="leading-relaxed flex items-center">
-                        <span>{'}'} <span className="text-gray-500">// Ready to innovate with .NET!</span></span>
-                        <div className="w-2 h-4 bg-green-400 animate-pulse ml-1"></div>
-                      </div>
+                      {codeSample.slice(0, displayedLines + 1).map((line, lineIdx) => {
+                        const isCurrentLine = lineIdx === displayedLines;
+                        const tokensToShow = isCurrentLine ? displayedTokens : line.length;
+                        
+                        return (
+                          <div key={lineIdx} className="leading-relaxed flex items-center">
+                            {line.slice(0, tokensToShow).map((token, tokenIdx) => (
+                              <span key={tokenIdx}>
+                                <span className={getTokenColor(token.type)}>
+                                  {token.value}
+                                </span>
+                                {token.space && ' '}
+                              </span>
+                            ))}
+                            {isCurrentLine && cursorVisible && displayedLines < codeSample.length && (
+                              <span className="inline-block w-2 h-4 bg-green-400 ml-0.5 align-middle"></span>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
