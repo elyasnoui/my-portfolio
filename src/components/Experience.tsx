@@ -1,138 +1,118 @@
+import Image from 'next/image';
+import Reveal from './Reveal';
+import SectionLabel from './SectionLabel';
+import { experienceEntries } from '@/constants/experience';
+
 const Experience = () => {
-    return (
-        <section id="experience" className="relative py-20 bg-gradient-to-bl from-black via-slate-950 to-gray-900 overflow-hidden">
-            {/* Ambient lighting effects */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-                <div className="absolute top-20 left-20 w-64 h-64 bg-green-400/8 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-20 right-20 w-80 h-80 bg-emerald-500/6 rounded-full blur-3xl animate-pulse delay-1000"></div>
-                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-            </div>
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 className="text-4xl sm:text-5xl font-bold mb-16">
-                    <span className="relative inline-block">
-                        <span className="absolute inset-0 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 blur-sm opacity-50">
-                            PROFESSIONAL TIMELINE
+  return (
+    <section
+      id="experience"
+      data-tone="dark"
+      className="gridlines gl-dark relative bg-ink text-white"
+    >
+      <div className="shell section-y relative z-10">
+        <SectionLabel
+          index="02"
+          title="Career"
+          tone="dark"
+          meta={`${experienceEntries.length} entries`}
+        />
+
+        <Reveal as="div" className="mt-12 lg:mt-16">
+          <h2 className="display-lg max-w-[16ch]">
+            A short career, spent close to the systems that matter.
+          </h2>
+        </Reveal>
+
+        <ol className="mt-16 border-t border-white/15 lg:mt-24">
+          {experienceEntries.map((entry, i) => (
+            <Reveal
+              as="li"
+              key={entry.id}
+              delay={i * 100}
+              className="group border-b border-white/15"
+            >
+              <article className="relative grid grid-cols-1 gap-6 py-10 transition-colors duration-500 lg:grid-cols-12 lg:gap-8 lg:py-12">
+                {/* Accent rule that extends on hover */}
+                <span
+                  aria-hidden
+                  className="absolute -top-px left-0 h-px w-0 bg-accent transition-[width] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full"
+                />
+
+                <div className="lg:col-span-3">
+                  <div className="flex items-center gap-4 lg:block">
+                    <span className="eyebrow text-accent">{entry.period}</span>
+                    <span aria-hidden className="h-px w-6 bg-white/20 lg:hidden" />
+                    <span className="eyebrow block text-white/55 lg:mt-3">
+                      {entry.kind}
+                      {entry.current && (
+                        <span className="ml-3 inline-flex items-center gap-2 text-white/70">
+                          <span className="relative flex h-1.5 w-1.5">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-70" />
+                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+                          </span>
+                          Current
                         </span>
-                        <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-emerald-400 to-cyan-400 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">
-                            PROFESSIONAL TIMELINE
-                        </span>
+                      )}
                     </span>
-                </h2>
-                {/* Timeline */}
-                <div className="max-w-4xl mx-auto">
-                    <div className="relative">
-                        {/* Timeline line */}
-                        <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-green-400/50 via-emerald-400/30 to-green-400/50"></div>
-                        
-                        {/* Experience Items */}
-                        <div className="space-y-12">
-                            {/* Lloyds Banking Group - Current Role */}
-                            <div className="relative flex items-start">
-                                <div className="absolute left-6 w-4 h-4 bg-green-400 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.6)] border-2 border-gray-900"></div>
-                                <div className="ml-16 bg-gray-800/30 border border-green-400/20 rounded-lg p-6 backdrop-blur-sm hover:border-green-400/40 transition-all duration-300">
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3">
-                                        <div>
-                                            <h3 className="text-xl font-semibold text-green-400 mb-1">Technical Application Specialist / Software Engineer</h3>
-                                            <p className="text-white font-medium">Lloyds Banking Group</p>
-                                        </div>
-                                        <span className="text-gray-400 text-sm mt-1 sm:mt-0">Aug 2022 - Present</span>
-                                    </div>
-                                    <p className="text-gray-300 mb-4 leading-relaxed">
-                                        Developed and maintained automation workflows using Xceptor for upstream/downstream trading systems. 
-                                        Led implementation of MI file extracts optimised for Power BI ingestion and achieved ~70% uptick in STP rates 
-                                        for trade confirmations through enhanced match rules.
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {['.NET', 'C#', 'Azure', 'Power BI', 'SQL Server', 'Agile'].map((tech) => (
-                                            <span
-                                                key={tech}
-                                                className="px-2 py-1 bg-green-400/10 text-green-400 rounded text-xs border border-green-400/20"
-                                            >
-                                                {tech}
-                                            </span>
-                                        ))}
-                                        {/* Special Xceptor Tag */}
-                                        <a
-                                            href="https://www.xceptor.com"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="px-2 py-1 bg-purple-900/30 text-purple-400 rounded text-xs border border-purple-400/30 shadow-[0_0_8px_rgba(147,51,234,0.3)] hover:shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:border-purple-400/50 hover:scale-105 transition-all duration-300 group"
-                                        >
-                                            <span className="relative">
-                                                Xceptor
-                                                <svg className="inline-block ml-1 w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity duration-300" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                                                </svg>
-                                            </span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                  </div>
 
-                            {/* Bright Network Internship */}
-                            <div className="relative flex items-start">
-                                <div className="absolute left-6 w-4 h-4 bg-emerald-400 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.6)] border-2 border-gray-900"></div>
-                                <div className="ml-16 bg-gray-800/20 border border-emerald-400/20 rounded-lg p-6 backdrop-blur-sm hover:border-emerald-400/40 transition-all duration-300">
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3">
-                                        <div>
-                                            <h3 className="text-xl font-semibold text-emerald-400 mb-1">Technology Internship Experience</h3>
-                                            <p className="text-white font-medium">Bright Network</p>
-                                        </div>
-                                        <span className="text-gray-400 text-sm mt-1 sm:mt-0">Dec 2020 - Jan 2021</span>
-                                    </div>
-                                    <p className="text-gray-300 mb-4 leading-relaxed">
-                                        Outlined project lifecycle for designing a fictitious facial recognition implementation for a large UK bank's 
-                                        online banking platform. Experienced agile project management and learned how scrum teams operate within 
-                                        sprints to produce high-quality software.
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {['Agile', 'Project Management', 'Scrum', 'Banking Systems', 'Team Collaboration'].map((tech) => (
-                                            <span
-                                                key={tech}
-                                                className="px-2 py-1 bg-emerald-400/10 text-emerald-400 rounded text-xs border border-emerald-400/20"
-                                            >
-                                                {tech}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Education */}
-                            <div className="relative flex items-start">
-                                <div className="absolute left-6 w-4 h-4 bg-cyan-400 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.6)] border-2 border-gray-900"></div>
-                                <div className="ml-16 bg-gray-800/20 border border-cyan-400/20 rounded-lg p-6 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300">
-                                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3">
-                                        <div>
-                                            <h3 className="text-xl font-semibold text-cyan-400 mb-1">BSc (Hons) Computer Science with Games Technology</h3>
-                                            <p className="text-white font-medium">City St George's, University of London</p>
-                                        </div>
-                                        <span className="text-gray-400 text-sm mt-1 sm:mt-0">Sep 2019 - July 2022</span>
-                                    </div>
-                                    <p className="text-gray-300 mb-4 leading-relaxed">
-                                        Achieved 2:1 Honours degree with modules including Programming in C++/Java, Data Structures and Algorithms, 
-                                        Object-Oriented Analysis and Design, and Database and Web Development. Built strong foundation in 
-                                        computer science fundamentals and software engineering principles.
-                                    </p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {['C++', 'Java', 'Data Structures', 'Algorithms', 'OOP', 'Database Design', 'Web Development'].map((tech) => (
-                                            <span
-                                                key={tech}
-                                                className="px-2 py-1 bg-cyan-400/10 text-cyan-400 rounded text-xs border border-cyan-400/20"
-                                            >
-                                                {tech}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                  {entry.logo && (
+                    // Decorative: the organisation name is already set as text
+                    // beside it, so the mark itself carries no unique info.
+                    <span
+                      aria-hidden
+                      className="mt-5 inline-flex h-10 items-center border border-ink/10 bg-white px-3 lg:h-16 lg:px-5"
+                    >
+                      <Image
+                        src={entry.logo}
+                        alt=""
+                        className="h-6 w-auto object-contain lg:h-10"
+                        sizes="(min-width: 1024px) 220px, 140px"
+                      />
+                    </span>
+                  )}
                 </div>
-            </div>
-        </section>
-    );
+
+                <div className="lg:col-span-5">
+                  <h3 className="display-sm text-balance text-white transition-colors duration-500 group-hover:text-accent">
+                    {entry.title}
+                  </h3>
+                  <p className="mt-3 text-sm font-medium tracking-tight text-white/55">
+                    {entry.organisation}
+                  </p>
+                </div>
+
+                <div className="lg:col-span-4">
+                  <p className="body-copy text-white/60">{entry.summary}</p>
+
+                  <ul className="mt-6 flex flex-wrap items-baseline gap-x-4 gap-y-2">
+                    {entry.tags.map((tag) => (
+                      <li key={tag} className="font-mono text-[0.6875rem] text-white/55">
+                        {tag}
+                      </li>
+                    ))}
+                    {entry.linkedTag && (
+                      <li className="font-mono text-[0.6875rem]">
+                        <a
+                          href={entry.linkedTag.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="link-underline text-accent"
+                        >
+                          {entry.linkedTag.label} ↗
+                        </a>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              </article>
+            </Reveal>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
 };
 
 export default Experience;

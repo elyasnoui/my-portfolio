@@ -1,348 +1,170 @@
 'use client';
 
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import CodeWindow from './CodeWindow';
+
+const stack = ['C# / .NET', 'SQL Server', 'Azure', 'Power BI', 'React', 'TypeScript'];
 
 const Hero = () => {
-  const [displayedLines, setDisplayedLines] = useState<number>(0);
-  const [displayedTokens, setDisplayedTokens] = useState<number>(0);
-  const [cursorVisible, setCursorVisible] = useState(true);
-
-  const codeSample = [
-    [ { value: 'using', type: 'keyword', space: true }, { value: 'System', type: 'framework', space: false }, { value: ';', type: 'punctuation', space: false } ],
-    [ { value: 'using', type: 'keyword', space: true }, { value: 'System', type: 'framework', space: false }, { value: '.', type: 'punctuation', space: false }, { value: 'Collections', type: 'framework', space: false }, { value: '.', type: 'punctuation', space: false }, { value: 'Generic', type: 'framework', space: false }, { value: ';', type: 'punctuation', space: false } ],
-    [],
-    [ { value: 'public class', type: 'keyword', space: true }, { value: 'ElyasNoui', type: 'framework', space: true }, { value: ':', type: 'punctuation', space: true }, { value: 'SoftwareEngineer', type: 'framework', space: false } ],
-    [ { value: '{', type: 'punctuation', space: false } ],
-    [ { value: '  ', type: 'indent', space: false }, { value: 'public string', type: 'keyword', space: true }, { value: 'Name', type: 'property', space: true }, { value: '{', type: 'punctuation', space: true }, { value: 'get', type: 'keyword', space: false }, { value: ';', type: 'punctuation', space: true }, { value: '}', type: 'punctuation', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '"Elyas Noui"', type: 'string', space: false }, { value: ';', type: 'punctuation', space: false } ],
-    [ { value: '  ', type: 'indent', space: false }, { value: 'public string', type: 'keyword', space: true }, { value: 'Role', type: 'property', space: true }, { value: '{', type: 'punctuation', space: true }, { value: 'get', type: 'keyword', space: false }, { value: ';', type: 'punctuation', space: true }, { value: '}', type: 'punctuation', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '"Software Engineer"', type: 'string', space: false }, { value: ';', type: 'punctuation', space: false } ],
-    [ { value: '  ', type: 'indent', space: false }, { value: 'public string', type: 'keyword', space: true }, { value: 'Company', type: 'property', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '"Lloyds Banking Group"', type: 'string', space: false }, { value: ';', type: 'punctuation', space: false } ],
-    [ { value: '  ', type: 'indent', space: false }, { value: 'public int', type: 'keyword', space: true }, { value: 'YearsExperience', type: 'property', space: true }, { value: '=>', type: 'punctuation', space: true }, { value: 'DateTime', type: 'framework', space: false }, { value: '.', type: 'punctuation', space: false }, { value: 'UtcNow', type: 'property', space: false }, { value: '.', type: 'punctuation', space: false }, { value: 'Year', type: 'property', space: true }, { value: '-', type: 'punctuation', space: true }, { value: '2022', type: 'number', space: false }, { value: ';', type: 'punctuation', space: false } ],
-    [],
-    [ { value: '  ', type: 'indent', space: false }, { value: 'public', type: 'keyword', space: true }, { value: 'Dictionary', type: 'framework', space: false }, { value: '<string, string[]>', type: 'generic', space: true }, { value: 'Skills', type: 'property', space: true }, { value: '=', type: 'punctuation', space: true }, { value: 'new', type: 'keyword', space: false }, { value: '()', type: 'punctuation', space: false } ],
-    [ { value: '  ', type: 'indent', space: false }, { value: '{', type: 'punctuation', space: false } ],
-    [ { value: '    ', type: 'indent', space: false }, { value: '[', type: 'punctuation', space: false }, { value: '"Backend"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '[', type: 'punctuation', space: false }, { value: '".NET"', type: 'string', space: false }, { value: ',', type: 'punctuation', space: true }, { value: '"C#"', type: 'string', space: false }, { value: ',', type: 'punctuation', space: true }, { value: '"ASP.NET Core"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: false }, { value: ',', type: 'punctuation', space: false } ],
-    [ { value: '    ', type: 'indent', space: false }, { value: '[', type: 'punctuation', space: false }, { value: '"Frontend"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '[', type: 'punctuation', space: false }, { value: '"Blazor"', type: 'string', space: false }, { value: ',', type: 'punctuation', space: true }, { value: '"React"', type: 'string', space: false }, { value: ',', type: 'punctuation', space: true }, { value: '"TypeScript"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: false }, { value: ',', type: 'punctuation', space: false } ],
-    [ { value: '    ', type: 'indent', space: false }, { value: '[', type: 'punctuation', space: false }, { value: '"Database"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: true }, { value: '=', type: 'punctuation', space: true }, { value: '[', type: 'punctuation', space: false }, { value: '"SQL Server"', type: 'string', space: false }, { value: ',', type: 'punctuation', space: true }, { value: '"Entity Framework"', type: 'string', space: false }, { value: ']', type: 'punctuation', space: false } ],
-    [ { value: '  ', type: 'indent', space: false }, { value: '}', type: 'punctuation', space: false } ],
-    [ { value: '}', type: 'punctuation', space: true }, { value: '// Ready to innovate with .NET!', type: 'comment', space: false } ]
-  ];
-
-  // Typing animation effect
+  // Page-load reveal: the hero is above the fold, so it animates on mount
+  // rather than on scroll. One tick after paint so the transition actually runs.
+  const [loaded, setLoaded] = useState(false);
   useEffect(() => {
-    const typeNextToken = async () => {
-      if (displayedLines < codeSample.length) {
-        const currentLine = codeSample[displayedLines];
-        
-        if (displayedTokens < currentLine.length) {
-          // Type next token on current line
-          await new Promise(resolve => setTimeout(resolve, 50)); // 0.5ms per character (50ms per token for visibility)
-          setDisplayedTokens(prev => prev + 1);
-        } else {
-          // Move to next line
-          await new Promise(resolve => setTimeout(resolve, 100)); // Brief pause between lines
-          setDisplayedLines(prev => prev + 1);
-          setDisplayedTokens(0);
-        }
-      }
-    };
-
-    typeNextToken();
-  }, [displayedLines, displayedTokens, codeSample]);
-
-  // Cursor blink effect
-  useEffect(() => {
-    const cursorInterval = setInterval(() => {
-      setCursorVisible(prev => !prev);
-    }, 530);
-    return () => clearInterval(cursorInterval);
+    const id = setTimeout(() => setLoaded(true), 80);
+    return () => clearTimeout(id);
   }, []);
 
-  const getTokenColor = (type: string) => {
-    switch (type) {
-      case 'keyword': return 'text-purple-400';
-      case 'framework': return 'text-cyan-400';
-      case 'property': return 'text-green-400';
-      case 'string': return 'text-yellow-300';
-      case 'number': return 'text-yellow-300';
-      case 'comment': return 'text-gray-500';
-      case 'generic': return 'text-cyan-400';
-      case 'punctuation': return 'text-white';
-      case 'indent': return '';
-      default: return 'text-white';
-    }
-  };
+  const reveal = loaded ? 'is-revealed' : '';
 
   return (
-    <section id="home" className="relative pt-16 min-h-screen flex items-center bg-gradient-to-br from-slate-900 via-gray-900 to-slate-950 dark:from-gray-950 dark:via-slate-950 dark:to-black overflow-hidden">
-      {/* Ambient lighting effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-80 h-80 bg-green-400/12 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-cyan-400/8 rounded-full blur-3xl animate-pulse delay-500"></div>
-        <div className="absolute bottom-1/4 right-1/3 w-72 h-72 bg-teal-400/9 rounded-full blur-3xl animate-pulse delay-700"></div>
-        <div className="absolute top-20 right-20 w-48 h-48 bg-lime-400/6 rounded-full blur-3xl animate-pulse delay-300"></div>
-        <div className="absolute bottom-32 left-1/3 w-56 h-56 bg-green-300/7 rounded-full blur-3xl animate-pulse delay-900"></div>
-      </div>
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-20 items-center">
-          {/* Text Content */}
-          <div className="text-center lg:text-left">
-            <div className="mb-6">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 leading-tight">
-                Hello, I&apos;m{' '}
-                <span className="relative inline-block whitespace-nowrap">
-                  <span className="absolute inset-0 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 blur-sm opacity-50">
-                    {'{ ELYAS NOUI }'}
-                  </span>
-                  <span className="absolute inset-0 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 blur-md opacity-30">
-                    {'{ ELYAS NOUI }'}
-                  </span>
-                  <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-emerald-400 to-cyan-400 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">
-                    {'{ ELYAS NOUI }'}
-                  </span>
-                </span>
-              </h1>
-              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-2xl text-gray-300 font-bold mb-6">
-                Currently working as a{' '}
-                <span className="relative inline-block">
-                  <span className="absolute inset-0 text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-500 blur-sm opacity-40">
-                    SOFTWARE ENGINEER
-                  </span>
-                  <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.6)]">
-                    SOFTWARE ENGINEER
-                  </span>
-                </span>
-              </h2>
-            </div>
-            
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto lg:mx-0">
-              I create beautiful, responsive, and user-friendly web applications 
-              using modern technologies. Passionate about clean code, great design, 
-              and solving complex problems.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <a
-                href="#projects"
-                className="relative inline-flex items-center justify-center px-8 py-3 text-base font-bold uppercase tracking-wider rounded-lg text-black bg-gradient-to-r from-green-400 via-emerald-400 to-cyan-400 transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.6)] hover:shadow-[0_0_30px_rgba(34,197,94,0.8)] hover:scale-105 group overflow-hidden"
-              >
-                <span className="absolute inset-0 bg-gradient-to-r from-green-300 to-cyan-300 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-                <span className="relative">View My Work</span>
-                <svg className="ml-2 -mr-1 w-4 h-4 relative" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </a>
-              {/* Neon Border Button */}
-              <a
-                href="#contact"
-                className="relative inline-flex items-center justify-center px-8 py-3 text-base font-bold uppercase tracking-wider rounded-lg text-green-400 bg-transparent border-2 border-green-400 transition-all duration-300 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.7)] hover:text-cyan-300 hover:border-cyan-300 hover:scale-105 group"
-              >
-                <span className="absolute inset-0 bg-gradient-to-r from-green-400/10 to-cyan-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></span>
-                <span className="relative">Get In Touch</span>
-              </a>
+    <section
+      id="home"
+      data-tone="dark"
+      className="atmos gridlines gl-dark relative isolate overflow-hidden bg-ink text-white"
+    >
+      <div className="shell relative z-10 flex min-h-[100svh] flex-col justify-between pt-24 pb-0 lg:pt-28">
+        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-12 lg:gap-10 xl:gap-16">
+          {/* ---- Statement ---- */}
+          <div className="lg:col-span-6 2xl:col-span-7">
+            <div
+              data-reveal="fade"
+              className={`${reveal} mb-8 flex flex-wrap items-center gap-x-5 gap-y-2`}
+              style={{ ['--reveal-delay' as string]: '80ms' }}
+            >
+              <span className="eyebrow text-accent">Elyas Noui</span>
+              <span aria-hidden className="hidden h-px w-10 bg-white/25 sm:block" />
+              <span className="eyebrow text-white/55">Software Engineer</span>
+              <span aria-hidden className="hidden h-px w-10 bg-white/25 sm:block" />
+              <span className="eyebrow text-white/55">London, UK</span>
             </div>
 
-            {/* Tech Stack Icons */}
-            <div className="mt-12">
-              <p className="text-sm text-green-400 mb-4 font-medium uppercase tracking-wider">
-                TECHNOLOGIES I WORK WITH
-              </p>
-              <div className="flex flex-wrap justify-center lg:justify-start gap-3">
-                {['C# .NET', 'Next.js', 'Python', 'SQL'].map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-3 py-1.5 bg-gray-800/50 text-green-400 rounded-lg text-sm font-mono border border-green-400/20 shadow-[0_0_8px_rgba(34,197,94,0.2)] hover:shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:border-green-400/40 transition-all duration-300"
-                  >
-                    {tech}
+            <h1 className={`display-xl ${reveal} max-w-[13ch] text-balance`}>
+              {['Automation', 'for systems', 'that'].map((lineText, i) => (
+                <span className="line-mask" key={lineText}>
+                  <span style={{ ['--reveal-delay' as string]: `${160 + i * 90}ms` }}>
+                    {lineText}
                   </span>
-                ))}
-                {/* Xceptor Tag */}
+                </span>
+              ))}
+              <span className="line-mask">
+                <span
+                  className="text-accent"
+                  style={{ ['--reveal-delay' as string]: '430ms' }}
+                >
+                  can&apos;t fail.
+                </span>
+              </span>
+            </h1>
+
+            <div
+              data-reveal=""
+              className={`${reveal} mt-9`}
+              style={{ ['--reveal-delay' as string]: '560ms' }}
+            >
+              <p className="lede measure text-white/65">
+                I&apos;m a Software Engineer at{' '}
+                <span className="text-white">Lloyds Banking Group</span>, building
+                automation workflows across upstream and downstream trading systems —
+                with{' '}
                 <a
                   href="https://www.xceptor.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 bg-purple-900/30 text-purple-400 rounded-lg text-sm font-mono border border-purple-400/30 shadow-[0_0_8px_rgba(147,51,234,0.3)] hover:shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:border-purple-400/50 hover:scale-105 transition-all duration-300 group"
+                  className="link-underline text-accent"
                 >
-                  <span className="relative">
-                    Xceptor
-                    <svg className="inline-block ml-1 w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity duration-300" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </span>
+                  Xceptor
+                </a>
+                , .NET and SQL Server underneath.
+              </p>
+
+              <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <a
+                  href="#projects"
+                  className="group inline-flex items-center justify-between gap-6 bg-white px-7 py-4 text-sm font-semibold tracking-tight text-ink transition-colors duration-300 hover:bg-accent hover:text-white sm:justify-start"
+                >
+                  Selected work
+                  <svg
+                    className="arrow-nudge h-3.5 w-3.5"
+                    viewBox="0 0 14 14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    aria-hidden
+                  >
+                    <path d="M2 12 12 2M5 2h7v7" />
+                  </svg>
+                </a>
+                <a
+                  href="#contact"
+                  className="group inline-flex items-center justify-between gap-6 border border-white/25 px-7 py-4 text-sm font-semibold tracking-tight text-white transition-colors duration-300 hover:border-white hover:bg-white/5 sm:justify-start"
+                >
+                  Get in touch
+                  <svg
+                    className="arrow-nudge h-3.5 w-3.5"
+                    viewBox="0 0 14 14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    aria-hidden
+                  >
+                    <path d="M2 12 12 2M5 2h7v7" />
+                  </svg>
                 </a>
               </div>
             </div>
           </div>
 
-          {/* Mobile Tablet Display - Visible only on screens < 630px */}
-          <div className="flex justify-center min-[630px]:hidden">
-            <div className="relative">
-              <div className="absolute -top-3 -right-3 w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]" style={{animationDuration: '2s'}}></div>
-              <div className="absolute -bottom-3 -left-3 w-2 h-2 bg-cyan-400 rounded-full animate-ping shadow-[0_0_6px_rgba(34,197,94,0.6)]" style={{animationDuration: '3s'}}></div>
-              <div className="absolute top-1/4 -right-5 w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce shadow-[0_0_6px_rgba(34,197,94,0.5)]" style={{animationDuration: '2.5s'}}></div>
-              
-              {/* Tablet Container */}
-              <div className="w-83 h-118 bg-gray-900 rounded-xl border-4 border-gray-700 shadow-[0_0_25px_rgba(34,197,94,0.3)] relative overflow-hidden">
-                {/* Tablet Bezel */}
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-3">
-                  {/* Screen */}
-                  <div className="w-full h-full bg-black rounded-lg border border-green-400/20 overflow-hidden relative">
-                    {/* Status Bar */}
-                    <div className="bg-gray-800 px-3 py-1 flex justify-between items-center border-b border-green-400/10">
-                      <div className="text-green-400 text-xs font-mono">appsettings.json</div>
-                      <div className="flex space-x-1">
-                        <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>
-                        <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div>
-                        <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
-                      </div>
-                    </div>
-                    
-                    {/* JSON Content */}
-                    <div className="p-3 font-mono text-xs leading-relaxed text-green-400">
-                      <div>{'{'}</div>
-                      <div className="ml-2"><span className="text-cyan-400">"Developer"</span>: {'{'}</div>
-                      <div className="ml-4"><span className="text-cyan-400">"Name"</span>: <span className="text-yellow-300">"Elyas Noui"</span>,</div>
-                      <div className="ml-4"><span className="text-cyan-400">"Role"</span>: <span className="text-yellow-300">"Software Engineer"</span>,</div>
-                      <div className="ml-4"><span className="text-cyan-400">"Company"</span>: <span className="text-yellow-300">"Lloyds Banking Group"</span>,</div>
-                      <div className="ml-4"><span className="text-cyan-400">"YearsExperience"</span>: <span className="text-purple-400">3</span></div>
-                      <div className="ml-2">{'},'},</div>
-                      <div className="ml-2 mt-2"><span className="text-cyan-400">"Skills"</span>: {'{'}</div>
-                      <div className="ml-4"><span className="text-cyan-400">"Backend"</span>: [</div>
-                      <div className="ml-6"><span className="text-yellow-300">".NET"</span>, <span className="text-yellow-300">"C#"</span>, <span className="text-yellow-300">"ASP.NET Core"</span></div>
-                      <div className="ml-4">],</div>
-                      <div className="ml-4"><span className="text-cyan-400">"Frontend"</span>: [</div>
-                      <div className="ml-6"><span className="text-yellow-300">"Blazor"</span>, <span className="text-yellow-300">"React"</span>, <span className="text-yellow-300">"TypeScript"</span></div>
-                      <div className="ml-4">],</div>
-                      <div className="ml-4"><span className="text-cyan-400">"Database"</span>: [</div>
-                      <div className="ml-6"><span className="text-yellow-300">"SQL Server"</span>, <span className="text-yellow-300">"Entity Framework"</span></div>
-                      <div className="ml-4">]</div>
-                      <div className="ml-2">{'}'}</div>
-                      <div>{'}'}</div>
-                      <div className="flex items-center mt-1">
-                        <div className="w-1 h-2 bg-green-400 animate-pulse"></div>
-                      </div>
-                    </div>
-                    
-                    {/* Screen reflection effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-green-400/5 to-transparent pointer-events-none"></div>
-                  </div>
-                </div>
-                
-                {/* Home button */}
-                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-600 rounded-full"></div>
-              </div>
+          {/* ---- Technical showcase ---- */}
+          <div
+            data-reveal=""
+            className={`${reveal} lg:col-span-6 2xl:col-span-5`}
+            style={{ ['--reveal-delay' as string]: '340ms' }}
+          >
+            <div className="mb-3 flex items-baseline justify-between gap-4">
+              <span className="eyebrow text-white/40">Currently compiling</span>
+              <span className="eyebrow text-white/25">01 — 01</span>
             </div>
-          </div>
-
-          {/* Desktop IDE Interface - Hidden on screens < 630px */}
-          <div className="hidden min-[630px]:flex justify-center lg:justify-end lg:pl-8 xl:pl-12">
-            <div className="relative">
-              {/* Floating neon orbs around IDE */}
-              <div className="absolute -top-4 -right-4 w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-[0_0_12px_rgba(34,197,94,0.8)]" style={{animationDuration: '2s'}}></div>
-              <div className="absolute -bottom-4 -left-4 w-2 h-2 bg-cyan-400 rounded-full animate-ping shadow-[0_0_8px_rgba(34,197,94,0.6)]" style={{animationDuration: '3s'}}></div>
-              <div className="absolute top-1/4 -left-6 w-2 h-2 bg-emerald-400 rounded-full animate-bounce shadow-[0_0_8px_rgba(34,197,94,0.5)]" style={{animationDuration: '2.5s'}}></div>
-              
-              {/* Background IDE Panes - Stacked Effect */}
-              <div className="absolute -top-2 -left-4 w-[34rem] h-[25rem] lg:w-[33rem] lg:h-[26rem] xl:w-[38rem] xl:h-[30rem] bg-gray-800 rounded-lg border border-green-400/20 shadow-[0_0_25px_rgba(34,197,94,0.2)] z-10">
-                <div className="bg-gray-750 border-b border-green-400/15 px-4 py-2 rounded-t-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex space-x-2">
-                      <div className="w-3 h-3 bg-red-400/60 rounded-full"></div>
-                      <div className="w-3 h-3 bg-yellow-400/60 rounded-full"></div>
-                      <div className="w-3 h-3 bg-green-400/60 rounded-full"></div>
-                    </div>
-                    <div className="text-green-400/60 text-xs font-mono">appsettings.json</div>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -top-1 -left-2 w-[34rem] h-[25rem] lg:w-[33rem] lg:h-[26rem] xl:w-[38rem] xl:h-[30rem] bg-gray-850 rounded-lg border border-green-400/25 shadow-[0_0_20px_rgba(34,197,94,0.15)] z-20">
-                <div className="bg-gray-800 border-b border-green-400/20 px-4 py-2 rounded-t-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex space-x-2">
-                      <div className="w-3 h-3 bg-red-400/80 rounded-full"></div>
-                      <div className="w-3 h-3 bg-yellow-400/80 rounded-full"></div>
-                      <div className="w-3 h-3 bg-green-400/80 rounded-full"></div>
-                    </div>
-                    <div className="text-green-400/80 text-xs font-mono">SoftwareEngineer.cs</div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Main IDE Container */}
-              <div className="relative z-30 w-[34rem] h-[25rem] lg:w-[33rem] lg:h-[26rem] xl:w-[38rem] xl:h-[30rem] bg-gray-900 rounded-lg border border-green-400/30 shadow-[0_0_30px_rgba(34,197,94,0.2)] overflow-hidden">
-                {/* IDE Header */}
-                <div className="bg-gray-800 border-b border-green-400/20 px-4 py-2 flex items-center justify-between">
-                  <div className="flex space-x-2">
-                    <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                    <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                  </div>
-                  <div className="text-green-400 text-xs font-mono">ElyasNoui.cs</div>
-                  <div className="text-green-400/60 text-xs">●</div>
-                </div>
-                
-                {/* IDE Content */}
-                <div className="p-6 font-mono text-xs xl:text-sm leading-relaxed h-full overflow-hidden">
-                  <div className="flex">
-                    {/* Code Line Numbers */}
-                    <div className="text-green-400/40 mr-6 select-none">
-                      {codeSample.slice(0, displayedLines + 1).map((_, idx) => (
-                        <div key={idx} className="leading-relaxed">{idx + 1}</div>
-                      ))}
-                    </div>
-                    
-                    {/* Code content with typing animation */}
-                    <div className="flex-1">
-                      {codeSample.slice(0, displayedLines + 1).map((line, lineIdx) => {
-                        const isCurrentLine = lineIdx === displayedLines;
-                        const tokensToShow = isCurrentLine ? displayedTokens : line.length;
-                        
-                        return (
-                          <div key={lineIdx} className="leading-relaxed flex items-center">
-                            {line.slice(0, tokensToShow).map((token, tokenIdx) => (
-                              <span key={tokenIdx}>
-                                <span className={getTokenColor(token.type)}>
-                                  {token.value}
-                                </span>
-                                {token.space && ' '}
-                              </span>
-                            ))}
-                            {isCurrentLine && cursorVisible && displayedLines < codeSample.length && (
-                              <span className="inline-block w-2 h-4 bg-green-400 ml-0.5 align-middle"></span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Status bar */}
-                <div className="absolute bottom-0 left-0 right-0 bg-green-400/10 border-t border-green-400/20 px-4 py-1">
-                  <div className="flex justify-between items-center text-xs">
-                    <div className="text-green-400">C#</div>
-                    <div className="text-green-400/60">Ln 17, Col 47</div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                      <span className="text-green-400">Live</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <CodeWindow />
           </div>
         </div>
 
-      </div>
-      
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 hidden min-[630px]:block">
-        <div className="flex flex-col items-center">
-          <span className="text-sm text-green-400 mb-2 font-medium uppercase tracking-wider">Scroll down</span>
-          <div className="w-6 h-10 border-2 border-green-400 rounded-full flex justify-center shadow-[0_0_15px_rgba(34,197,94,0.4)]">
-            <div className="w-1 h-3 bg-green-400 rounded-full animate-bounce mt-2 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+        {/* ---- Metadata rail: bridges the statement and the code block ---- */}
+        <div className="mt-12 border-t border-white/10 lg:mt-12">
+          <div className="flex flex-col gap-6 py-6 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+            <div className="flex items-center gap-3">
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+              </span>
+              <span className="eyebrow text-white/70">
+                Available for new opportunities
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              <span className="eyebrow text-white/35">Core stack</span>
+              <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                {stack.map((tech) => (
+                  <li
+                    key={tech}
+                    className="font-mono text-xs text-white/60 transition-colors duration-300 hover:text-accent"
+                  >
+                    {tech}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <a
+              href="#profile"
+              className="group hidden items-center gap-3 text-white/45 transition-colors duration-300 hover:text-white lg:flex"
+              aria-label="Scroll to profile"
+            >
+              <span className="eyebrow">Scroll</span>
+              <span aria-hidden className="relative block h-8 w-px overflow-hidden bg-white/20">
+                <span className="absolute inset-x-0 top-0 h-3 animate-bounce bg-accent" />
+              </span>
+            </a>
           </div>
         </div>
       </div>

@@ -1,30 +1,338 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------
+   Design tokens — a restrained editorial palette.
+   Foundation: near-black, off-white, soft grey. One accent: ember.
+   ------------------------------------------------------------------ */
+@theme {
+  --color-ink: #0a0a0b;
+  --color-ink-soft: #141417;
+  --color-ink-raised: #1b1b1f;
+  --color-ink-line: #2a2a30;
+
+  --color-paper: #f6f5f2;
+  --color-paper-pure: #ffffff;
+  --color-paper-line: #dfdcd5;
+
+  --color-mute: #6a6a72;
+  --color-mute-dark: #9a9aa3;
+
+  /* Ember — the single brand accent. `accent` reads on dark, `accent-ink` on light. */
+  --color-accent: #ff5a1f;
+  --color-accent-ink: #c2410c;
+  --color-accent-wash: #fdeee7;
+
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* Motion — one easing, three durations. */
+  --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --dur-fast: 200ms;
+  --dur-base: 400ms;
+  --dur-slow: 800ms;
+  --shell-max: 96rem;
+  --shell-pad: clamp(1.25rem, 5vw, 5rem);
+  --nav-h: 4.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* ------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------ */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-h) + 1rem);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Skip link */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 200;
+  transform: translateY(-200%);
+  background: var(--color-ink);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: transform var(--dur-fast) var(--ease-editorial);
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ------------------------------------------------------------------
+   Layout primitives
+   ------------------------------------------------------------------ */
+.shell {
+  width: 100%;
+  max-width: var(--shell-max);
+  margin-inline: auto;
+  padding-inline: var(--shell-pad);
+}
+
+.section-y {
+  padding-block: clamp(4.5rem, 11vw, 9.5rem);
+}
+
+.measure {
+  max-width: 60ch;
+}
+
+/* Vertical hairlines that give every section the same underlying grid. */
+.gridlines {
+  position: relative;
+}
+.gridlines::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--gl, transparent) 0 1px,
+    transparent 1px var(--gl-step, 25%)
+  );
+}
+.gl-dark {
+  --gl: rgba(255, 255, 255, 0.055);
+}
+.gl-light {
+  --gl: rgba(10, 10, 11, 0.055);
+}
+@media (max-width: 767px) {
+  .gridlines::before {
+    --gl-step: 50%;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Typography scale
+   ------------------------------------------------------------------ */
+.display-xl,
+.display-lg,
+.display-md,
+.display-sm {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.display-xl {
+  font-size: clamp(2.75rem, 7.2vw, 7.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+.display-lg {
+  font-size: clamp(2.25rem, 6vw, 5rem);
+}
+.display-md {
+  font-size: clamp(1.75rem, 3.6vw, 3rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+.display-sm {
+  font-size: clamp(1.35rem, 2.2vw, 1.9rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.metric {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.75rem, 6vw, 5rem);
+  line-height: 0.85;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.lede {
+  font-size: clamp(1.0625rem, 1.35vw, 1.3125rem);
+  line-height: 1.6;
+  letter-spacing: -0.008em;
+}
+
+.body-copy {
+  font-size: 0.9875rem;
+  line-height: 1.7;
+}
+
+/* ------------------------------------------------------------------
+   Motion — scroll reveals, driven by IntersectionObserver in <Reveal/>
+   ------------------------------------------------------------------ */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition:
+    opacity var(--dur-slow) var(--ease-editorial),
+    transform var(--dur-slow) var(--ease-editorial);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+[data-reveal="fade"] {
+  transform: none;
+}
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* Without JS the observers never fire — show everything. */
+@media (scripting: none) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+  .line-mask > span {
+    transform: none;
+  }
+}
+
+/* Line-by-line masked reveal for display headings. */
+.line-mask {
+  display: block;
+  overflow: hidden;
+}
+.line-mask > span {
+  display: block;
+  transform: translate3d(0, 105%, 0);
+  transition: transform 1s var(--ease-editorial);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.is-revealed .line-mask > span,
+.is-revealed.line-mask > span {
+  transform: none;
+}
+
+/* Marquee capability strip */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 48s linear infinite;
+}
+.marquee-host:hover .marquee {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Animated link underline */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.15em;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--dur-base) var(--ease-editorial);
+}
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Arrow nudge on hover */
+.arrow-nudge {
+  transition: transform var(--dur-base) var(--ease-editorial);
+}
+.group:hover .arrow-nudge {
+  transform: translate3d(0.3rem, -0.3rem, 0);
+}
+
+.no-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+.no-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+.no-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 99px;
+}
+
+/* Soft radial atmosphere behind dark sections — one, not six. */
+.atmos::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    60% 55% at 78% 12%,
+    rgba(255, 90, 31, 0.09) 0%,
+    transparent 65%
+  );
+}
+
+/* ------------------------------------------------------------------
+   Reduced motion
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+  .line-mask > span {
+    transform: none;
+  }
+  .marquee {
+    animation: none;
+  }
 }

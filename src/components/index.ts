@@ -1,7 +1,16 @@
 export { default as Navigation } from './Navigation';
 export { default as Hero } from './Hero';
+export { default as CodeWindow } from './CodeWindow';
 export { default as Footer } from './Footer';
 export { default as SocialSidebar } from './SocialSidebar';
+export { default as SocialIcon } from './SocialIcon';
+export { default as Profile } from './Profile';
 export { default as Experience } from './Experience';
+export { default as Projects } from './Projects';
+export { default as ProjectGlyph } from './ProjectGlyph';
+export { default as TechMarquee } from './TechMarquee';
 export { default as Skills } from './Skills';
 export { default as Contact } from './Contact';
+export { default as Reveal } from './Reveal';
+export { default as Counter } from './Counter';
+export { default as SectionLabel } from './SectionLabel';
