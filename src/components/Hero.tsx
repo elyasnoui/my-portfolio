@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import CodeWindow from './CodeWindow';
+import DotMatrix from './DotMatrix';
 
 const stack = ['C# / .NET', 'SQL Server', 'Azure', 'Power BI', 'React', 'TypeScript'];
 
@@ -20,8 +21,12 @@ const Hero = () => {
     <section
       id="home"
       data-tone="dark"
-      className="atmos gridlines gl-dark relative isolate overflow-hidden bg-ink text-white"
+      className="atmos relative isolate overflow-hidden bg-ink text-white"
     >
+      {/* The hero's grid is expressed as this reactive dot field rather than
+          the hairline rules used by the other sections. */}
+      <DotMatrix />
+
       <div className="shell relative z-10 flex min-h-[100svh] flex-col justify-between pt-24 pb-0 lg:pt-28">
         <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-12 lg:gap-10 xl:gap-16">
           {/* ---- Statement ---- */}

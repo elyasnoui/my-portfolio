@@ -1,3 +1,4 @@
+import DeviceShowcase from './DeviceShowcase';
 import ProjectGlyph from './ProjectGlyph';
 import Reveal from './Reveal';
 import SectionLabel from './SectionLabel';
@@ -20,40 +21,61 @@ const ProjectEntry = ({ project }: { project: Project }) => {
   const isFeature = project.scale === 'feature';
   const isLive = project.status === 'Live';
 
-  const body = (
+  const badges = (
     <>
-      {/* Visual */}
-      <div
-        className={`relative overflow-hidden border border-ink/12 bg-paper-pure ${
-          isFeature ? 'aspect-[16/9] lg:aspect-[21/9]' : 'aspect-[4/3]'
+      <span className="eyebrow absolute left-5 top-5 text-mute">{project.index}</span>
+      <span
+        className={`eyebrow absolute right-5 top-5 flex items-center gap-2 ${
+          isLive ? 'text-accent-ink' : 'text-mute'
         }`}
       >
-        <ProjectGlyph
-          variant={project.glyph}
-          className="absolute inset-0 h-full w-full text-ink/45 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
-        />
-        <span
-          aria-hidden
-          className="absolute inset-0 bg-ink/0 transition-colors duration-500 group-hover:bg-ink/[0.04]"
-        />
+        {isLive && <span className="h-1.5 w-1.5 rounded-full bg-accent-ink" />}
+        {project.status}
+      </span>
+    </>
+  );
 
-        <span className="eyebrow absolute left-5 top-5 text-mute">{project.index}</span>
-
-        <span
-          className={`eyebrow absolute right-5 top-5 flex items-center gap-2 ${
-            isLive ? 'text-accent-ink' : 'text-mute'
+  const body = (
+    <>
+      {/* Visual — real screenshots in device frames where they exist,
+          otherwise the abstract glyph. */}
+      {project.renders ? (
+        // No overflow-hidden here: the devices lift on hover and their
+        // shadows need to render outside the stage. Each frame clips its
+        // own image internally, so nothing escapes.
+        <div className="relative border border-ink/12 bg-paper-pure px-5 pt-14 pb-8 sm:px-10 lg:px-14 lg:pt-16 lg:pb-10">
+          {badges}
+          <DeviceShowcase
+            desktop={project.renders.desktop}
+            mobile={project.renders.mobile}
+            desktopAlt={`${project.title} — desktop layout`}
+            mobileAlt={`${project.title} — mobile layout`}
+          />
+        </div>
+      ) : (
+        <div
+          className={`relative overflow-hidden border border-ink/12 bg-paper-pure ${
+            isFeature ? 'aspect-[16/9] lg:aspect-[21/9]' : 'aspect-[4/3]'
           }`}
         >
-          {isLive && <span className="h-1.5 w-1.5 rounded-full bg-accent-ink" />}
-          {project.status}
-        </span>
+          <ProjectGlyph
+            variant={project.glyph}
+            className="absolute inset-0 h-full w-full text-ink/45 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+          />
+          <span
+            aria-hidden
+            className="absolute inset-0 bg-ink/0 transition-colors duration-500 group-hover:bg-ink/[0.04]"
+          />
 
-        {isLive && (
-          <span className="absolute bottom-5 right-5 flex h-11 w-11 items-center justify-center border border-ink/15 bg-paper-pure text-ink transition-colors duration-500 group-hover:border-accent-ink group-hover:bg-accent-ink group-hover:text-white">
-            <ArrowIcon className="arrow-nudge h-3.5 w-3.5" />
-          </span>
-        )}
-      </div>
+          {badges}
+
+          {isLive && (
+            <span className="absolute bottom-5 right-5 flex h-11 w-11 items-center justify-center border border-ink/15 bg-paper-pure text-ink transition-colors duration-500 group-hover:border-accent-ink group-hover:bg-accent-ink group-hover:text-white">
+              <ArrowIcon className="arrow-nudge h-3.5 w-3.5" />
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Caption */}
       <div
@@ -77,7 +99,7 @@ const ProjectEntry = ({ project }: { project: Project }) => {
               </li>
             ))}
           </ul>
-          {isLive && (
+          {project.href && (
             <span className="link-underline mt-6 inline-flex items-center gap-2 text-sm font-semibold text-accent-ink">
               View source
               <ArrowIcon className="h-3 w-3" />
