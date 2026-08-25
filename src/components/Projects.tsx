@@ -20,6 +20,8 @@ const ArrowIcon = ({ className = '' }: { className?: string }) => (
 const ProjectEntry = ({ project }: { project: Project }) => {
   const isFeature = project.scale === 'feature';
   const isLive = project.status === 'Live';
+  const links = project.links ?? [];
+  const [primary] = links;
 
   const badges = (
     <>
@@ -99,30 +101,52 @@ const ProjectEntry = ({ project }: { project: Project }) => {
               </li>
             ))}
           </ul>
-          {project.href && (
-            <span className="link-underline mt-6 inline-flex items-center gap-2 text-sm font-semibold text-accent-ink">
-              View source
-              <ArrowIcon className="h-3 w-3" />
-            </span>
+          {links.length > 0 && (
+            /* Lifted above the card-wide overlay below so these stay clickable
+               in their own right — otherwise every one of them would resolve to
+               the primary link. */
+            <div className="relative z-20 mt-6 flex flex-wrap items-center gap-x-8 gap-y-3">
+              {links.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  /* `.link-underline` forces display:inline-block, so the label
+                     and arrow lay out inline and would otherwise break across
+                     two lines once two links share the row. */
+                  className="link-underline whitespace-nowrap text-sm font-semibold text-accent-ink"
+                >
+                  {link.label}
+                  <ArrowIcon className="ml-2 inline h-3 w-3 align-baseline" />
+                </a>
+              ))}
+            </div>
           )}
         </div>
       </div>
     </>
   );
 
-  const className = 'group block w-full';
-
-  return project.href ? (
-    <a
-      href={project.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={className}
-    >
+  return (
+    <div className="group relative block w-full">
       {body}
-    </a>
-  ) : (
-    <div className={className}>{body}</div>
+
+      {/* Keeps the whole card clickable without nesting anchors inside it,
+          which multiple caption links would otherwise require. Hidden from
+          assistive tech and the tab order because the visible link row above
+          already offers the same destination. */}
+      {primary && (
+        <a
+          href={primary.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-hidden
+          tabIndex={-1}
+          className="absolute inset-0 z-10"
+        />
+      )}
+    </div>
   );
 };
 

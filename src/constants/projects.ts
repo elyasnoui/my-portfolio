@@ -1,8 +1,15 @@
 import type { StaticImageData } from 'next/image';
 import desktopRender from '@/resources/renders/desktop.png';
 import mobileRender from '@/resources/renders/mobile.png';
+import inboxDesktopRender from '@/resources/renders/inbox-copilot-desktop.png';
+import inboxMobileRender from '@/resources/renders/inbox-copilot-mobile.png';
 
 export type ProjectStatus = 'Live' | 'In preparation';
+
+export interface ProjectLink {
+  label: string;
+  href: string;
+}
 
 export interface Project {
   id: string;
@@ -12,7 +19,11 @@ export interface Project {
   description: string;
   disciplines: string[];
   status: ProjectStatus;
-  href?: string;
+  /**
+   * Destinations for this entry. The first also makes the whole card clickable;
+   * any others render beside it as ordinary links.
+   */
+  links?: ProjectLink[];
   /** 'feature' spans the full grid, 'standard' pairs up two-across. */
   scale: 'feature' | 'standard';
   /** Selects the abstract graphic drawn for this entry. */
@@ -30,7 +41,7 @@ export const projects: Project[] = [
       'The site you are reading — designed and built from scratch with Next.js, React and Tailwind CSS. Source is public.',
     disciplines: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS'],
     status: 'Live',
-    href: 'https://github.com/elyasnoui/my-portfolio',
+    links: [{ label: 'View source', href: 'https://github.com/elyasnoui/my-portfolio' }],
     scale: 'feature',
     glyph: 'grid',
     renders: { desktop: desktopRender, mobile: mobileRender },
@@ -40,12 +51,23 @@ export const projects: Project[] = [
     index: '02',
     title: 'Inbox Copilot',
     description:
-      'An Outlook assistant in progress — an ASP.NET Core API behind a Next.js client, running on seeded demo data while the Microsoft Graph and Azure OpenAI integrations are built. Source is public.',
-    disciplines: ['C#', 'ASP.NET Core', 'Next.js', 'TypeScript'],
-    status: 'In preparation',
-    href: 'https://github.com/elyasnoui/inbox-copilot',
+      'An Outlook assistant — an ASP.NET Core API behind a Next.js client, reading mail and calendars through Microsoft Graph and calling Azure OpenAI to summarise threads, draft replies and propose meeting times. The public demo runs on seeded mailbox data; the AI responses are generated live. Source is public.',
+    disciplines: [
+      'C#',
+      'ASP.NET Core',
+      'Microsoft Graph',
+      'Azure OpenAI',
+      'Next.js',
+      'TypeScript',
+    ],
+    status: 'Live',
+    links: [
+      { label: 'View live demo', href: 'https://inbox-copilot-five.vercel.app' },
+      { label: 'View source', href: 'https://github.com/elyasnoui/inbox-copilot' },
+    ],
     scale: 'feature',
     glyph: 'flow',
+    renders: { desktop: inboxDesktopRender, mobile: inboxMobileRender },
   },
   {
     id: 'web-applications',
