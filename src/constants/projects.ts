@@ -24,6 +24,11 @@ export interface Project {
    * any others render beside it as ordinary links.
    */
   links?: ProjectLink[];
+  /**
+   * Slug of a write-up on this site. When present it takes over as the card's own
+   * destination, since keeping a reader here beats sending them to GitHub.
+   */
+  caseStudy?: string;
   /** 'feature' spans the full grid, 'standard' pairs up two-across. */
   scale: 'feature' | 'standard';
   /** Selects the abstract graphic drawn for this entry. */
@@ -68,6 +73,7 @@ export const projects: Project[] = [
     scale: 'feature',
     glyph: 'flow',
     renders: { desktop: inboxDesktopRender, mobile: inboxMobileRender },
+    caseStudy: 'model-reliability',
   },
   {
     id: 'web-applications',

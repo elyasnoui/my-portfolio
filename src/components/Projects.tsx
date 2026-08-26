@@ -1,8 +1,10 @@
+import Link from 'next/link';
 import DeviceShowcase from './DeviceShowcase';
 import ProjectGlyph from './ProjectGlyph';
 import Reveal from './Reveal';
 import SectionLabel from './SectionLabel';
 import { projects, type Project } from '@/constants/projects';
+import { caseStudiesByProject } from '@/constants/caseStudies';
 
 const ArrowIcon = ({ className = '' }: { className?: string }) => (
   <svg
@@ -22,6 +24,8 @@ const ProjectEntry = ({ project }: { project: Project }) => {
   const isLive = project.status === 'Live';
   const links = project.links ?? [];
   const [primary] = links;
+  const caseStudyHref = project.caseStudy ? `/work/${project.caseStudy}` : null;
+  const studyCount = caseStudiesByProject(project.id).length;
 
   const badges = (
     <>
@@ -101,11 +105,28 @@ const ProjectEntry = ({ project }: { project: Project }) => {
               </li>
             ))}
           </ul>
-          {links.length > 0 && (
+          {caseStudyHref && (
+            <p className="body-copy mt-4 max-w-[52ch] text-mute">
+              {studyCount > 1
+                ? `${studyCount} engineering write-ups on what went wrong and what came out of it.`
+                : 'An engineering write-up on what went wrong and what came out of it.'}
+            </p>
+          )}
+
+          {(links.length > 0 || caseStudyHref) && (
             /* Lifted above the card-wide overlay below so these stay clickable
                in their own right — otherwise every one of them would resolve to
                the primary link. */
             <div className="relative z-20 mt-6 flex flex-wrap items-center gap-x-8 gap-y-3">
+              {caseStudyHref && (
+                <Link
+                  href={caseStudyHref}
+                  className="link-underline whitespace-nowrap text-sm font-semibold text-accent-ink"
+                >
+                  Read the write-up
+                  <ArrowIcon className="ml-2 inline h-3 w-3 align-baseline" />
+                </Link>
+              )}
               {links.map((link) => (
                 <a
                   key={link.href}
@@ -135,16 +156,24 @@ const ProjectEntry = ({ project }: { project: Project }) => {
       {/* Keeps the whole card clickable without nesting anchors inside it,
           which multiple caption links would otherwise require. Hidden from
           assistive tech and the tab order because the visible link row above
-          already offers the same destination. */}
-      {primary && (
-        <a
-          href={primary.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-hidden
-          tabIndex={-1}
-          className="absolute inset-0 z-10"
-        />
+          already offers the same destination.
+
+          A write-up wins the card when one exists: it keeps the reader on the
+          site, and it opens in this tab rather than a new one because internal
+          navigation should not spawn tabs. */}
+      {caseStudyHref ? (
+        <Link href={caseStudyHref} aria-hidden tabIndex={-1} className="absolute inset-0 z-10" />
+      ) : (
+        primary && (
+          <a
+            href={primary.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-hidden
+            tabIndex={-1}
+            className="absolute inset-0 z-10"
+          />
+        )
       )}
     </div>
   );
