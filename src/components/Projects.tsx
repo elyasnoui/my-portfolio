@@ -25,7 +25,12 @@ const ProjectEntry = ({ project }: { project: Project }) => {
   const links = project.links ?? [];
   const [primary] = links;
   const caseStudyHref = project.caseStudy ? `/work/${project.caseStudy}` : null;
-  const studyCount = caseStudiesByProject(project.id).length;
+  const studies = caseStudiesByProject(project.id);
+  const studyCount = studies.length;
+  const fallbackTeaser = 'An engineering write-up on what went wrong and what came out of it.';
+  /* A lone study may describe itself; several of them share the generic line,
+     since one teaser cannot speak for all of them. */
+  const teaser = studyCount === 1 ? (studies[0].teaser ?? fallbackTeaser) : fallbackTeaser;
 
   const badges = (
     <>
@@ -109,7 +114,7 @@ const ProjectEntry = ({ project }: { project: Project }) => {
             <p className="body-copy mt-4 max-w-[52ch] text-mute">
               {studyCount > 1
                 ? `${studyCount} engineering write-ups on what went wrong and what came out of it.`
-                : 'An engineering write-up on what went wrong and what came out of it.'}
+                : teaser}
             </p>
           )}
 

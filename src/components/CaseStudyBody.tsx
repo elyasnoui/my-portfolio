@@ -7,14 +7,18 @@ import type { Block, CaseStudySection } from '@/constants/caseStudies';
 const CaseStudyBody = ({ sections }: { sections: CaseStudySection[] }) => (
   <div className="grid gap-14 lg:gap-20">
     {sections.map((section, index) => (
-      <section key={section.heading} className="grid gap-6 lg:grid-cols-12 lg:gap-10">
-        <div className="lg:col-span-4">
+      /* `min-w-0` on every grid child, all the way down to the scroll box below:
+         an auto track sizes to its content's minimum, so without it one long
+         unbroken line inside a code block widens the whole page rather than
+         scrolling within itself. */
+      <section key={section.heading} className="grid min-w-0 gap-6 lg:grid-cols-12 lg:gap-10">
+        <div className="min-w-0 lg:col-span-4">
           {/* Numbered so a reader can see the shape of the argument at a glance. */}
           <span className="eyebrow text-mute">{String(index + 1).padStart(2, '0')}</span>
           <h2 className="display-sm mt-3 text-balance">{section.heading}</h2>
         </div>
 
-        <div className="grid gap-5 lg:col-span-8">
+        <div className="grid min-w-0 gap-5 lg:col-span-8">
           {section.blocks.map((block, i) => (
             <BlockView key={i} block={block} />
           ))}
@@ -36,7 +40,7 @@ const BlockView = ({ block }: { block: Block }) => {
       // element's own font, so 62ch inside a monospace block is materially narrower than
       // 62ch of body text and the column edges would not line up.
       return (
-        <div className="max-w-[62ch]">
+        <div className="min-w-0 max-w-[62ch]">
           <pre className="overflow-x-auto border border-ink/12 bg-ink-soft p-4 text-paper">
             <code className="font-mono text-[0.75rem] leading-relaxed whitespace-pre">
               {block.code}

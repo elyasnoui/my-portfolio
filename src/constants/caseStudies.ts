@@ -28,6 +28,12 @@ export interface CaseStudy {
   lede: string;
   stack: string[];
   sections: CaseStudySection[];
+  /**
+   * How the project card offers this study. Most of these are accounts of
+   * something going wrong, which is what the card says by default — set this
+   * where that would misdescribe the piece.
+   */
+  teaser?: string;
   /** The generalisable point, shown as the closing statement. */
   takeaway: string;
   links: ProjectLink[];
@@ -284,6 +290,218 @@ export const caseStudies: CaseStudy[] = [
     takeaway:
       'Configuration that looks correct in isolation is not verified. Check it against what the other side actually sends.',
     links: inboxCopilotLinks,
+  },
+
+  {
+    slug: 'break-identity',
+    projectId: 'tessera',
+    project: 'Tessera',
+    title: 'The same five breaks, filed under two names',
+    lede:
+      'A reconciliation break has to survive a rerun — otherwise every note and assignment made on it vanishes the next morning. That means its identity has to be stable. Two call sites each computed that identity a different way, and the result was one queue holding the same disagreements twice.',
+    stack: ['C#', 'EF Core', 'Blazor Server', 'SQLite', 'SQL Server'],
+    sections: [
+      {
+        heading: 'Identity has to survive the run that found it',
+        blocks: [
+          {
+            kind: 'para',
+            text: 'A reconciliation runs every morning, and most of yesterday’s breaks are still there. If a rerun minted a fresh identity for each one, every note and assignment made yesterday would be orphaned and the queue would be useless by the second day. So a break’s identity is a hash of the reconciliation’s name, the matching key, and the kind of disagreement — computed the same way on every run, so the same disagreement always resolves to the same row.',
+          },
+          {
+            kind: 'para',
+            text: 'That only works if “the reconciliation’s name” means one specific string, consistently. The step that runs the match declares exactly that: a required parameter documented as “break identities are derived from it”. One value, one place it is supposed to live.',
+          },
+        ],
+      },
+      {
+        heading: 'Two callers, two readings of the same rule',
+        blocks: [
+          {
+            kind: 'para',
+            text: 'The service that runs a reconciliation and updates the queue took the name as an argument rather than reading the step’s own parameter. Nothing enforced that a caller’s argument matched what the pipeline had actually declared — it was just another string, supplied wherever the service was called from.',
+          },
+          {
+            kind: 'compare',
+            caption: 'The same pipeline, three answers to “what is this reconciliation called”',
+            rows: [
+              { label: 'The step’s own declared name', value: '"Trades vs settlements"' },
+              { label: 'Designer, clicking Reconcile', value: '_draft.Name → "Trades against settlements"' },
+              { label: 'Command line, no flag given', value: 'definition.Name → "Trades against settlements"' },
+            ],
+          },
+          {
+            kind: 'para',
+            text: 'The pipeline’s own display name and the reconcile step’s configured name were never the same string — a wholly ordinary thing for a person to type, since nothing suggested they needed to match. Every call path that used the pipeline’s display name produced an identity space the step itself had never claimed.',
+          },
+        ],
+      },
+      {
+        heading: 'What that looked like in the queue',
+        blocks: [
+          {
+            kind: 'para',
+            text: 'Running the same reconciliation from the designer and from the command line — an entirely normal thing to do while building and testing it — filed the same five disagreements under both names. Ten rows, five real breaks:',
+          },
+          {
+            kind: 'compare',
+            caption: 'Two identities, same underlying disagreements',
+            rows: [
+              { label: '"Trades vs settlements" · TR-0003', value: 'Value difference · Resolved, 2 history entries' },
+              { label: '"Trades against settlements" · TR-0003', value: 'Value difference · Open, no history' },
+            ],
+          },
+          {
+            kind: 'para',
+            text: 'A break resolved through one path stayed open in the other, because to the queue they were not the same break — they hashed differently. The bug was invisible with a single caller, because a lone caller cannot disagree with itself. It took a second one, computing the same fact a second way, for the fork to become visible at all.',
+          },
+        ],
+      },
+      {
+        heading: 'The fix removes the choice rather than validating it',
+        blocks: [
+          {
+            kind: 'para',
+            text: 'The tempting fix is to check the argument against the step’s parameter and reject a mismatch. That still leaves two sources of truth and a check that has to run every time. The actual fix was to stop taking the name as an argument at all: the service now reads it directly from the reconcile step inside the definition. There is no longer a second place to type it, so there is nothing left to disagree.',
+          },
+          {
+            kind: 'callout',
+            text: 'A value with only one legitimate source should have exactly one line of code that produces it — not a contract that every caller is trusted to honour.',
+          },
+        ],
+      },
+      {
+        heading: 'What holds regardless',
+        blocks: [
+          {
+            kind: 'list',
+            items: [
+              'A stable identity needs exactly one computation, not several that are supposed to agree. The moment a second caller is free to supply its own answer, you have two systems that happen to match until they don’t.',
+              'A bug with one caller and a bug with two callers can be the same bug. The first only looks correct because there is nothing yet for it to disagree with.',
+              'Prefer deriving a fact from something already authoritative over asking every caller to pass it in correctly. Removing the parameter is a smaller surface than documenting how to use it.',
+            ],
+          },
+        ],
+      },
+    ],
+    takeaway:
+      'Two independent computations of the same fact will eventually disagree, whether the computation is a model inferring a weekday or two code paths agreeing on a name. The fix is never a check that catches the disagreement — it is removing the second computation.',
+    links: [],
+  },
+
+  {
+    slug: 'documents-as-evidence',
+    projectId: 'venuecompliant',
+    project: 'VenueCompliant',
+    title: 'Documents that have to survive being questioned',
+    lede:
+      'The paid product generates the four written procedures Martyn’s Law requires. Those documents are a venue’s evidence that it did what the Act asks, so the problem was never producing good prose — it was producing prose that can be traced, reproduced and recalled. That decided nearly every architectural choice, including a refusal to put a language model anywhere near it.',
+    stack: ['TypeScript', 'Next.js', 'Postgres', 'PDF & DOCX generation'],
+    teaser:
+      'An engineering write-up on what the documents have to survive, and how that decided the architecture.',
+    sections: [
+      {
+        heading: 'The output is evidence, not content',
+        blocks: [
+          {
+            kind: 'para',
+            text: 'A standard-tier premises has to put four procedures in writing — evacuation, invacuation, lockdown and communication — and make sure its staff can actually carry them out. The person who signs them is the responsible person under the Act, and it is their name on it, not ours. If anyone ever asks why their lockdown procedure says what it says, “the tool generated it” is not an answer they can give.',
+          },
+          {
+            kind: 'para',
+            text: 'So every block in the library carries the source it came from, and a block without one fails to load rather than logging a warning. The citation travels with the sentence instead of sitting in a bibliography that somebody has to reconcile against the text later.',
+          },
+          {
+            kind: 'code',
+            code: 'id: EVAC-OVERNIGHT-01\napplies_when:\n  all: [overnight_accommodation]\nrequires_vars: [assembly_point]\nsource: "Terrorism (Protection of Premises) Act 2025, s.5(3)(a); …"\nversion: 1',
+          },
+        ],
+      },
+      {
+        heading: 'Fifteen venue types is not fifteen libraries',
+        blocks: [
+          {
+            kind: 'para',
+            text: 'The checker recognises fifteen kinds of venue, from nightclubs to village halls to places of worship. The obvious way to generate their documents is to write fifteen sets of procedures — which is fifteen libraries to keep in step every time the guidance moves, and it encodes the wrong idea about what separates them in the first place.',
+          },
+          {
+            kind: 'compare',
+            caption: 'What actually differs between a church’s evacuation procedure and a hotel’s',
+            rows: [
+              { label: 'Not', value: 'church-ness or hotel-ness — the visible axis, and the wrong one' },
+              { label: 'But', value: 'overnight_accommodation · volunteer_staff · limited_mobility_occupants' },
+            ],
+          },
+          {
+            kind: 'para',
+            text: 'Blocks declare the attributes they apply under and a venue receives the ones that match its profile. Ten attribute keys cover all fifteen types, and venue type survives only as a default profile the customer can correct — because a church hall that hosts a sleepover genuinely needs the overnight block, and no amount of routing by venue type would ever have handed it one.',
+          },
+          {
+            kind: 'para',
+            text: 'The questionnaire then falls out of the same declarations. Each block names the variables its text needs, and the questions asked are the union of those across the blocks that actually apply. It is not possible to ask a venue for an assembly point it will never be shown, or to render a document around a variable nobody was asked for.',
+          },
+          {
+            kind: 'para',
+            text: 'The safety net is a snapshot of the composed output for each of the fifteen types. Editing one block shows exactly which venue types it moved — including the ones that were not being thought about, which is the entire reason a shared library is safe to have.',
+          },
+        ],
+      },
+      {
+        heading: 'No model in the part where one would be most impressive',
+        blocks: [
+          {
+            kind: 'para',
+            text: 'Generation is deterministic: the same answers produce identical output. Nothing in the engine reads the clock — the generation timestamp is a parameter — nothing is random, and nothing depends on object key order.',
+          },
+          {
+            kind: 'para',
+            text: 'Two things follow from that. A trust running twenty-five schools gets twenty-five consistent documents rather than twenty-five subtly different ones. And any customer’s exact document can be reproduced from their stored answers months after it was issued, which is what makes it evidence rather than a file they happen to hold.',
+          },
+          {
+            kind: 'para',
+            text: 'Which rules out generating the prose with a language model — the one part of this product where reaching for one would be most tempting, and would demo best. These documents tell people what to do during a terrorist attack. Every sentence that reaches a customer has been written and reviewed by a human, because output nobody can reproduce is output nobody can stand behind when asked where a particular instruction came from.',
+          },
+          {
+            kind: 'callout',
+            text: 'There is a language model in the product — it drafts replies to inbound enquiries, internally, for a person to read before anything is sent. The question was never whether to use one. It was where the boundary goes, and on which side of it a human sits.',
+          },
+        ],
+      },
+      {
+        heading: 'Which is what makes a recall possible',
+        blocks: [
+          {
+            kind: 'para',
+            text: 'Every generated document stores a manifest of the blocks that produced it and the version each one was at. A daily sweep compares those manifests against the current library and flags any organisation holding a document that has fallen behind.',
+          },
+          {
+            kind: 'para',
+            text: 'It was built for the ordinary case — guidance moves, a block is rewritten, its version is bumped. It is also what stands behind the promise to reissue documents free of charge when that happens. Nobody has to remember who bought what, because the documents remember what they were made of.',
+          },
+          {
+            kind: 'para',
+            text: 'A recall mechanism that has never fired is a belief rather than a capability, so the test is to bump a block version in a test environment and watch the right organisation get flagged. Reading the sweep and finding it convincing is a different act from seeing it name somebody.',
+          },
+        ],
+      },
+      {
+        heading: 'What holds regardless',
+        blocks: [
+          {
+            kind: 'list',
+            items: [
+              'Work out what the output has to survive before choosing how to produce it. Here it had to survive being questioned years later, which disqualified the fastest way to build almost every part of it.',
+              'Find the axis the variation genuinely runs along. Fifteen venue types was the visible dimension; ten attributes covered the same ground in a library small enough to keep correct.',
+              'Derive rather than maintain alongside. The questions asked, the contents of a document and the list of customers affected by a change are all computed from the blocks — none of them is a second list somebody has to remember to update.',
+              'Decide where a model’s output is allowed to reach a person unreviewed. That is a boundary you draw once, deliberately, not a question you answer per feature.',
+            ],
+          },
+        ],
+      },
+    ],
+    takeaway:
+      'Determinism here is not a performance concern, it is an evidentiary one. If you cannot reproduce exactly what you gave somebody, you cannot defend it — which disqualifies anything that makes the output unreproducible, however good that output is.',
+    links: [{ label: 'Visit the site', href: 'https://venuecompliant.com' }],
   },
 ];
 

@@ -4,23 +4,61 @@
     {
       "name": "portfolio",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 3000,
       "autoPort": true
     },
     {
       "name": "portfolio-prod",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start"],
+      "runtimeArgs": [
+        "run",
+        "start"
+      ],
       "port": 3000,
       "autoPort": true
     },
     {
       "name": "inbox-copilot",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "C:\\Users\\elyas\\Github\\inbox-copilot"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--prefix",
+        "C:\\Users\\elyas\\Github\\inbox-copilot"
+      ],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "tessera-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--prefix",
+        "C:/Users/elyas/Github/tessera/web"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "tessera-api",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": [
+        "watch",
+        "run",
+        "--non-interactive",
+        "--project",
+        "C:/Users/elyas/Github/tessera/src/Tessera.Api",
+        "--",
+        "--no-launch-profile",
+        "--urls",
+        "http://localhost:5220"
+      ],
+      "port": 5220
     }
   ]
 }

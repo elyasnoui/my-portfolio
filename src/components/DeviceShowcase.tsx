@@ -13,21 +13,40 @@ type DeviceShowcaseProps = {
 };
 
 /* The iPhone mockup's transparent screen, found by flood-filling the enclosed
-   transparent region of its alpha channel (391×850 within the 427×878 body).
-   Measuring by expanding outward from the centre does NOT work here: the
-   Dynamic Island is opaque, so it halts the upward scan and reports a screen
-   that starts below it.
+   transparent region of its alpha channel: 389×850 at (19, 14) within the
+   427×878 body. Measuring by expanding outward from the centre does NOT work
+   here: the Dynamic Island is opaque, so it halts the upward scan and reports a
+   screen that starts below it.
 
-   The bezel does not mask the screenshot's square corners — the cutout's
-   corner pixels are transparent — so the screen clip carries its own radius.
-   Percentages are per-axis, so 16.11% of width paired with 7.41% of height
-   (16.11 × the screen's 0.46 aspect) yields a circular corner at any size. */
+   The frame's opaque bezel stops about 2px SHORT of that cutout on every side,
+   with a soft antialiased edge in between. So the screenshot must not stop at the
+   cutout either: it has to run on underneath until it reaches solid bezel.
+   Anything less leaves that soft ring with the page behind it rather than the
+   screenshot, which reads as a pale halo just inside the screen's edge — the join
+   looks unanchored. Measured outward from the cutout, solid bezel begins at 3px
+   on the left and bottom and 4px on the top and right, and runs to 13-16px before
+   the phone's outer edge. A 4px overhang sits inside that window on all sides.
+
+   The corners decide the radius, and there the cutout is a squircle rather than
+   an arc: its inset from the left edge runs 85, 47, 25, 11, 4, 2, 0 over the
+   first 54 rows, where a circular corner would start at 54 and fall away far
+   faster. `border-radius` only draws an ellipse, so nothing traces it exactly —
+   the corner simply has to stay in the same window the straight edges use, past
+   the cutout but not past the bezel.
+
+   Fitting row by row is not enough on its own, and silently leaves the top
+   corners leaking: a corner is bounded along both of its edges, so the fit has to
+   hold per row AND per column. The four corners differ slightly too, so one
+   radius has to satisfy the tightest of them.
+
+   Percentages are per-axis — 15.62% of the box's width, 7.11% of its height — so
+   the corner holds its shape at any rendered size. */
 const SCREEN = {
-  left: '4.215%',
-  top: '1.595%',
-  width: '91.569%',
-  height: '96.811%',
-  borderRadius: '16.11% / 7.41%',
+  left: '3.513%',
+  top: '1.139%',
+  width: '92.974%',
+  height: '97.722%',
+  borderRadius: '15.62% / 7.11%',
 };
 
 /** Distance at which proximity reaches zero, as a multiple of device size. */

@@ -3,6 +3,8 @@ import desktopRender from '@/resources/renders/desktop.png';
 import mobileRender from '@/resources/renders/mobile.png';
 import inboxDesktopRender from '@/resources/renders/inbox-copilot-desktop.png';
 import inboxMobileRender from '@/resources/renders/inbox-copilot-mobile.png';
+import venueDesktopRender from '@/resources/renders/venuecompliant-desktop.png';
+import venueMobileRender from '@/resources/renders/venuecompliant-mobile.png';
 
 export type ProjectStatus = 'Live' | 'In preparation';
 
@@ -52,8 +54,22 @@ export const projects: Project[] = [
     renders: { desktop: desktopRender, mobile: mobileRender },
   },
   {
-    id: 'inbox-copilot',
+    id: 'venuecompliant',
     index: '02',
+    title: 'VenueCompliant',
+    description:
+      'A Martyn’s Law compliance tool for UK venues, built ahead of the Act’s spring 2027 enforcement. A free checker decides whether a premises or an event falls in scope and at which tier; the paid product composes the four written procedures the Act requires, tracks staff awareness against them and reminds a venue to review them. Documents are assembled from a cited block library by attribute rather than by venue type, so fifteen kinds of venue share one library instead of fifteen — and there is deliberately no language model anywhere in the generation path. Closed-source.',
+    disciplines: ['Next.js', 'React', 'TypeScript', 'Postgres', 'Stripe', 'Vercel'],
+    status: 'Live',
+    links: [{ label: 'Visit the site', href: 'https://venuecompliant.com' }],
+    scale: 'feature',
+    glyph: 'grid',
+    renders: { desktop: venueDesktopRender, mobile: venueMobileRender },
+    caseStudy: 'documents-as-evidence',
+  },
+  {
+    id: 'inbox-copilot',
+    index: '03',
     title: 'Inbox Copilot',
     description:
       'An Outlook assistant — an ASP.NET Core API behind a Next.js client, reading mail and calendars through Microsoft Graph and calling Azure OpenAI to summarise threads, draft replies and propose meeting times. The public demo runs on seeded mailbox data; the AI responses are generated live. Source is public.',
@@ -76,8 +92,20 @@ export const projects: Project[] = [
     caseStudy: 'model-reliability',
   },
   {
+    id: 'tessera',
+    index: '04',
+    title: 'Tessera',
+    description:
+      'A data reconciliation platform — pipelines are configured, not coded: a step registry and a typed expression language drive a designer whose editors are generated from each step’s own parameter schema, not hand-written per step type. Ingests two feeds, applies validated rules, and produces a break queue with stable identities across reruns. Runs on SQLite or SQL Server behind the same EF Core model. Not yet public — the product is closed-source by design; the three libraries it consumes (expression engine, tabular parsing, resumable batch processing) are extracted as open-source packages.',
+    disciplines: ['C#', 'ASP.NET Core', 'Blazor Server', 'EF Core', 'SQL Server', 'Docker'],
+    status: 'In preparation',
+    scale: 'feature',
+    glyph: 'nodes',
+    caseStudy: 'break-identity',
+  },
+  {
     id: 'web-applications',
-    index: '03',
+    index: '05',
     title: 'Web Applications',
     description: 'Portfolio showcase coming soon.',
     disciplines: ['React', 'TypeScript', 'Blazor'],
@@ -87,7 +115,7 @@ export const projects: Project[] = [
   },
   {
     id: 'api-development',
-    index: '04',
+    index: '06',
     title: 'API Development',
     description: 'Portfolio showcase coming soon.',
     disciplines: ['C#', 'ASP.NET Core', 'SQL Server'],
@@ -97,7 +125,7 @@ export const projects: Project[] = [
   },
   {
     id: 'cloud-solutions',
-    index: '05',
+    index: '07',
     title: 'Cloud Solutions',
     description: 'Portfolio showcase coming soon.',
     disciplines: ['Azure', 'Azure DevOps', 'CI/CD'],
